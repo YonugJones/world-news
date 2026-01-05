@@ -5,7 +5,7 @@ Controlled inputs
 	•	Search input
 */
 
-import type { NewsCategory, NewsRegion } from '../../types/News'
+import type { NewsCategory, NewsRegion } from '../../types/news'
 
 type FiltersBarProps = {
   category: NewsCategory
