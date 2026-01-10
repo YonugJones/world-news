@@ -1,19 +1,22 @@
 import { useEffect, useMemo, useState } from 'react'
+import axios from 'axios'
+import { useDebounce } from './hooks/useDebouce'
+import { searchNews } from './api/worldNews'
+import type { Article, NewsCategory, NewsRegion } from './types/news'
+
 import { Header } from './components/Header/Header'
 import { FiltersBar } from './components/FiltersBar/FiltersBar'
 import { ArticleList } from './components/ArticleList/ArticleList'
 import { LoadingState } from './components/states/LoadingState'
 import { ErrorState } from './components/states/ErrorState'
 import { EmptyState } from './components/states/EmptyState'
-import type { Article, NewsCategory, NewsRegion } from './types/news'
-import { searchNews } from './api/worldNews'
-import axios from 'axios'
 
 export default function App() {
-  // filter state
   const [category, setCategory] = useState<NewsCategory>('top')
   const [region, setRegion] = useState<NewsRegion>('world')
   const [search, setSearch] = useState('')
+
+  const debouncedSearch = useDebounce(search)
 
   const [articles, setArticles] = useState<Article[]>([])
   const [loading, setLoading] = useState(false)
@@ -28,15 +31,14 @@ export default function App() {
 
   useEffect(() => {
     const controller = new AbortController()
-    const debounceMs = 400
 
-    const timer = window.setTimeout(async () => {
+    async function run() {
       setLoading(true)
       setError(null)
 
       try {
         const result = await searchNews({
-          search,
+          search: debouncedSearch, // ✅ use debounced value
           category,
           region,
           offset: 0,
@@ -46,36 +48,33 @@ export default function App() {
 
         setArticles(result.articles)
       } catch (err) {
-        // Ignore aborts
         if (controller.signal.aborted) return
 
-        // Axios error shaping
         if (axios.isAxiosError(err)) {
           const status = err.response?.status
           if (status === 401 || status === 403) {
-            setError('Auth error: check API key in .env.local')
+            setError('Auth error: check your API key in .env.local')
           } else if (status === 429) {
-            setError('Rate limited: too many requests. Try again in a bit')
+            setError('Rate limited: too many requests. Try again in a bit.')
           } else {
-            setError(err.response?.data.message ?? err.message)
+            setError(err.response?.data?.message ?? err.message)
           }
         } else if (err instanceof Error) {
           setError(err.message)
         } else {
-          setError('Something went wrong')
+          setError('Something went wrong.')
         }
 
         setArticles([])
       } finally {
         if (!controller.signal.aborted) setLoading(false)
       }
-    }, debounceMs)
-
-    return () => {
-      window.clearTimeout(timer)
-      controller.abort()
     }
-  }, [category, region, search, retryTick])
+
+    run()
+
+    return () => controller.abort()
+  }, [category, region, debouncedSearch, retryTick])
 
   return (
     <>
