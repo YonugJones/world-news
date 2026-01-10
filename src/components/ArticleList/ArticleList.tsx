@@ -4,7 +4,7 @@
 	•	Layout only (list or grid)
 */
 
-import type { Article } from '../../types/News'
+import type { Article } from '../../types/news'
 import { ArticleCard } from '../ArticleCard/ArticleCard'
 
 type ArticleListProps = {

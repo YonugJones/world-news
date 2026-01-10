@@ -10,7 +10,7 @@
 No state. No side effects.
 */
 
-import type { Article } from '../../types/News'
+import type { Article } from '../../types/news'
 
 type ArticleCardProps = {
   article: Article

@@ -41,12 +41,12 @@ export function toApiCategory(category: string): string | undefined {
 
 // UI regions are broad; API wants a specific source_country (ISO 3166).
 // Map to a representative country code.
-export function toSourceCountry(region: string): string {
+export function toSourceCountry(region: string): string | undefined {
   switch (region) {
     case 'us':
-      return 'use'
+      return 'us'
     case 'eu':
-      return 'bg'
+      return 'gb'
     case 'asia':
       return 'jp'
     case 'africa':
@@ -55,7 +55,7 @@ export function toSourceCountry(region: string): string {
       return 'us'
     case 'world':
     default:
-      return 'use'
+      return undefined
   }
 }
 
@@ -72,8 +72,8 @@ export async function searchNews({
   search,
   category,
   region,
-  offset,
-  number,
+  offset = 0,
+  number = 20,
   signal,
 }: SearchNewsArgs) {
   const apiCategory = toApiCategory(category)
@@ -87,13 +87,13 @@ export async function searchNews({
 
   const params = withApiKey({
     language: 'en',
-    'source-country': sourceCountry,
-    categories: apiCategory,
-    text: useText,
     offset,
     number,
-    // sort newest first
-    ...(useText ? { sort: 'publish-time', 'sort-direction': 'desc' } : {}),
+    ...(sourceCountry ? { 'source-country': sourceCountry } : {}),
+    ...(apiCategory ? { categories: apiCategory } : {}),
+    ...(useText
+      ? { text: useText, sort: 'publish-time', 'sort-direction': 'desc' }
+      : {}),
   })
 
   const res = await worldNewsClient.get<ApiSearchNewsResponse>('/search-news', {

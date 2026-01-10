@@ -25,8 +25,8 @@ export function FiltersBar({
   onSearchChange,
 }: FiltersBarProps) {
   return (
-    <section aria-label='Filters'>
-      <div>
+    <section className='flex justify-around' aria-label='Filters'>
+      <div className='flex items-center gap-3'>
         <label htmlFor='category'>Category</label>
         <select
           id='category'
@@ -44,7 +44,7 @@ export function FiltersBar({
         </select>
       </div>
 
-      <div>
+      <div className='flex items-center gap-3'>
         <label htmlFor='region'>Region</label>
         <select
           id='region'
@@ -60,7 +60,7 @@ export function FiltersBar({
         </select>
       </div>
 
-      <div>
+      <div className='flex items-center gap-3'>
         <label htmlFor='search'>Search</label>
         <input
           id='search'
