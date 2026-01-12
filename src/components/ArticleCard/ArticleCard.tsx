@@ -10,6 +10,7 @@
 No state. No side effects.
 */
 
+import { useState } from 'react'
 import type { Article } from '../../types/news'
 
 type ArticleCardProps = {
@@ -18,8 +19,23 @@ type ArticleCardProps = {
 }
 
 export function ArticleCard({ article, onOpen }: ArticleCardProps) {
+  const [imgError, setImgError] = useState(false)
+
+  const showImage = Boolean(article.imageUrl) && !imgError
+
   return (
-    <article className='border border-slate-300 rounded-md p-4 flex flex-col gap-2'>
+    <article className='border border-slate-300 rounded-md p-4 flex flex-col gap-3'>
+      {showImage && (
+        <div className='w-full overflow-hidden rounded-md border border-slate-200'>
+          <img
+            src={article.imageUrl}
+            alt={article.title}
+            loading='lazy'
+            className='w-full aspect-video object-cover'
+            onError={() => setImgError(true)}
+          />
+        </div>
+      )}
       <h3 className='font-semibold text-slate-800'>
         <a
           href={article.url}
