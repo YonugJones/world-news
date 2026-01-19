@@ -27,7 +27,9 @@ export function FiltersBar({
   return (
     <section className='flex justify-around' aria-label='Filters'>
       <div className='flex items-center gap-3'>
-        <label htmlFor='category'>Category</label>
+        <label htmlFor='category' className='font-semibold'>
+          Category
+        </label>
         <select
           id='category'
           value={category}
@@ -45,7 +47,9 @@ export function FiltersBar({
       </div>
 
       <div className='flex items-center gap-3'>
-        <label htmlFor='region'>Region</label>
+        <label htmlFor='region' className='font-semibold'>
+          Region
+        </label>
         <select
           id='region'
           value={region}
@@ -61,7 +65,9 @@ export function FiltersBar({
       </div>
 
       <div className='flex items-center gap-3'>
-        <label htmlFor='search'>Search</label>
+        <label htmlFor='search' className='font-semibold'>
+          Search
+        </label>
         <input
           id='search'
           type='search'
